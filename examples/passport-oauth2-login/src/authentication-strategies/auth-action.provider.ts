@@ -3,6 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+
+/**
+ * DO NOT REVIEW
+ * 
+ * This file will be removed once symlinks with master is tested
+ */
+
 import {Getter, inject, Provider, Setter} from '@loopback/context';
 import {Request} from '@loopback/rest';
 import {SecurityBindings, UserProfile} from '@loopback/security';

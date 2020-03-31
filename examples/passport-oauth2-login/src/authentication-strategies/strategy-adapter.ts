@@ -3,6 +3,12 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+/**
+ * DO NOT REVIEW
+ * 
+ * This file will be removed once symlinks with master is tested
+ */
+
 import {UserProfileFactory} from '@loopback/authentication';
 import {HttpErrors, Request} from '@loopback/rest';
 import {UserProfile} from '@loopback/security';

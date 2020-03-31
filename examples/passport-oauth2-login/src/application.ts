@@ -7,7 +7,6 @@ import {BootMixin} from '@loopback/boot';
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
-import path from 'path';
 import {MySequence} from './sequence';
 import {
   AuthenticationComponent,
@@ -18,7 +17,7 @@ import {
   Oauth2Authorization,
   AuthenticateActionProvider,
 } from './authentication-strategies';
-import {MyUserService, UserServiceBindings} from './services';
+import {LocalUserService, UserServiceBindings} from './services';
 import {ApplicationConfig, createBindingFromClass} from '@loopback/core';
 
 export class Oauth2LoginApplication extends BootMixin(
@@ -34,15 +33,7 @@ export class Oauth2LoginApplication extends BootMixin(
     // Set up the custom sequence
     this.sequence(MySequence);
 
-    // Set up default home page
-    this.static('/', path.join(__dirname, '../public'));
-
-    const client = require('../client/app');
-
-    this.mountExpressRouter('/', client);
-
     this.controller(Oauth2Controller);
-
     this.component(AuthenticationComponent);
 
     this.bind(AuthenticationBindings.AUTH_ACTION).toProvider(
@@ -62,6 +53,6 @@ export class Oauth2LoginApplication extends BootMixin(
   }
 
   setUpBindings(): void {
-    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(LocalUserService);
   }
 }

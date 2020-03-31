@@ -4,24 +4,51 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {repository} from '@loopback/repository';
-import {UserProfile} from '@loopback/security';
+import {Profile as UserProfile} from 'passport';
 import {UserRepository} from '../repositories';
 import {User} from '../models';
+import * as _ from 'lodash';
 
 export interface UserService {
-  findOrCreateExternalUser(profile: UserProfile): Promise<User>;
+  findOrCreateExternalUser(email: string, profile: UserProfile, token: string): Promise<UserProfile>;
 }
 
-export class MyUserService implements UserService {
+export interface UserWithToken extends UserProfile {
+  token: string
+}
+
+/**
+ * User service to accept a 'passport' UserProfile and save it locally
+ */
+export class LocalUserService implements UserService {
   constructor(
     @repository(UserRepository)
     public userRepository: UserRepository,
   ) {}
 
-  async findOrCreateExternalUser(profile: UserProfile): Promise<User> {
-    return new User({
-      id: 1,
-      ...profile,
+  /**
+   * find a linked local user for an external profile
+   * create a local user if not created yet.
+   * @param email 
+   * @param profile 
+   * @param token 
+   */
+  async findOrCreateExternalUser(email: string, profile: UserProfile, token: string): Promise<UserWithToken> {
+    let user: User[] = await this.userRepository.find({
+      where: {
+        email: email
+      }
     });
+    if (!user || !user.length) {
+      this.userRepository.create({
+        email: email,
+        name: profile.displayName,
+        username: email
+      });
+    }
+    return {
+      ...profile,
+      token: token
+    };
   }
 }
